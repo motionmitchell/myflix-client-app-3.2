@@ -1,20 +1,26 @@
 import React from "react";
 
+
 class MovieCard extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
-            movie:this.props.movie
+		//console.log (props);
+        this.state = {
+            
         }
     }
+    showMovie = (id)=>{
+        
+		this.props.setMovieView(id);
+    }
     render() {
-        return (<div>
-            <img src={this.props.movie.imageUrl}/>
-            <p>Title: {this.props.movie.title}</p>
-            <p>Description: {this.props.movie.description}</p>
-            <p>Genre: {this.props.movie.genre}</p>
-            <p>Director: {this.props.movie.director}</p>
+        return (<div><ol>
+            {this.props.movies.map ((movie)=>(
+                <li><button onClick={()=>this.showMovie(movie.id)}>{movie.title}</button></li>
+            ))}
+            </ol>
         </div>);
     }
+
 }
 export default MovieCard;

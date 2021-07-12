@@ -1,8 +1,9 @@
 import React from "react";
 
-class MovieCard extends React.Component {
+class MovieView extends React.Component {
     constructor(props) {
         super(props);
+		console.log (props.movie);
         this.state={
             movie:this.props.movie
         }
@@ -17,4 +18,4 @@ class MovieCard extends React.Component {
         </div>);
     }
 }
-export default MovieCard;
+export default MovieView;

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import logo from './logo.svg';
 import './App.css';
-
-import MainView from "./components/MainView";
+import MovieCard from "./components/MovieCard";
+import MovieView from "./components/MovieView";
 function App() {
 	  useEffect(() => {
     getMovies();
@@ -13,7 +13,7 @@ function App() {
   const getMovies = () => {
     //alert("load");
     //const t = localStorage.getItem("todos");
-//	document.getElementById ("divMovieView").style.display = "none"
+	document.getElementById ("divMovieView").style.display = "none"
 	// fetch ("")
 	const movies =[
                 {id:1, title:"Star Wars, New hope", description:"Star Wars, New hope", genre:"Sci Fi", director:"George Lucas", imageUrl:""},
@@ -25,18 +25,18 @@ function App() {
   const setMovieView=(idx)=>{
 	  //alert(idx);
 	  setMovie(movies[idx -1]);
-	  // document.getElementById ("divMainView").style.display = "none";
-	  //document.getElementById ("divMovieView").style.display = "block";
+	   document.getElementById ("divMainView").style.display = "none";
+	  document.getElementById ("divMovieView").style.display = "block";
   }
   const backClick=()=>{
-	  //document.getElementById ("divMovieView").style.display = "none";
-	  // document.getElementById ("divMainView").style.display = "block";
+	  document.getElementById ("divMovieView").style.display = "none";
+	   document.getElementById ("divMainView").style.display = "block";
   }
   return (
     <div className="App">
       <header className="App-header">
         <h3>Ryan's Movie App</h3>
-    <MainView/>
+	
       </header>
          
     </div>
