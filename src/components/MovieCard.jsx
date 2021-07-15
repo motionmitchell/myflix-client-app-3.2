@@ -1,6 +1,5 @@
 import React from "react";
 
-
 class MovieCard extends React.Component {
     constructor(props) {
         super(props);
@@ -21,6 +20,5 @@ class MovieCard extends React.Component {
             </ol>
         </div>);
     }
-
 }
 export default MovieCard;
