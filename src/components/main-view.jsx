@@ -1,15 +1,21 @@
 import React from "react";
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+
 import MovieCard from "./movie-card";
 import MovieView from "./movie-view";
 import LoginView from "./login-view";
 import RegistrationView from "./registration-view";
 import 'bootstrap/dist/css/bootstrap.css';
+require('dotenv').config();
 class MainView extends React.Component {
     constructor(props) {
         super(props);
-        
-		//console.log (props);
+        const t = process.env.SERVER_ROOT_URL+"";
+        if (t.length<4||t.charAt(0)!=='h')
+            this.SERVER_ROOT_URL = "https://ryanm-movies.herokuapp.com/";
+        else 
+            this.SERVER_ROOT_URL = t;
+	
         this.state = {
             movies:[],
             movie:{"genre":{"category":"Thriller"},
@@ -20,8 +26,16 @@ class MainView extends React.Component {
             error:null
         }
     }
+	  
+
+    //if ((this.SERVER_BASE_URL+"").length <4 || SERVER_BASE_URL.charAt(0)!=='h')
+    
+    
+    //SERVER_BASE_URL="http://localhost:8080/";
+
     componentDidMount(){
-        fetch("http://localhost:8080/movies")
+    //  alert(this.SERVER_BASE_URL);
+        fetch(this.SERVER_ROOT_URL+"movies")
       .then(res => res.json())
       .then(
         (result) => {
@@ -85,7 +99,7 @@ class MainView extends React.Component {
               
             </Route>
             <Route path="/login">
-              <LoginView/>
+              <LoginView server={this.SERVER_ROOT_URL}/>
             </Route>
 
             <Route path="/movies">
@@ -106,7 +120,7 @@ class MainView extends React.Component {
            
               </Route>
             <Route path="/register">
-              <RegistrationView/>
+              <RegistrationView server={this.SERVER_ROOT_URL}/>
             </Route>
           </Switch>
         </Router>);
