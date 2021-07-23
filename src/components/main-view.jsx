@@ -3,6 +3,8 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import MovieCard from "./movie-card";
 import MovieView from "./movie-view";
 import LoginView from "./login-view";
+import DirectorView from "./director-view";
+import GenreView from "./genre-view";
 import RegistrationView from "./registration-view";
 import 'bootstrap/dist/css/bootstrap.css';
 class MainView extends React.Component {
@@ -10,18 +12,17 @@ class MainView extends React.Component {
         super(props);
         
 		//console.log (props);
-        this.state = {
-            movies:[],
-            movie:undefined,
-            director:undefined,
-            genre: undefined,
-            isLoaded:false,
-            error:null
-        }
+    this.state = {
+      movies:[],
+      movie:undefined,
+      director:undefined,
+      genre: undefined,
+      isLoaded:false,
+      error:null
+  }
     }
-     SERVER_BASE_URL = "https://ryanm-movies.herokuapp.com/";
     componentDidMount(){
-        fetch(this.SERVER_BASE_URL+"movies")
+        fetch("http://localhost:8080/movies")
       .then(res => res.json())
       .then(
         (result) => {
@@ -50,30 +51,26 @@ class MainView extends React.Component {
 
         console.log (this.state.movies[idx]);
         this.setState({movie:this.state.movies[idx]})
-        
+       
     }
     showGenre = (idx)=>{
 
       console.log (this.state.movies[idx]);
       this.setState({genre:this.state.movies[idx].genre})
-    
+     
   }
     showDirector = (idx) => {
 
       console.log (this.state.movies[idx]);
       this.setState({director:this.state.movies[idx].director})
-    
+     
   }
-    backClick = () =>{
-        document.getElementById ("divMovieView").style.display = "none";
-        document.getElementById ("divMainView").style.display = "block";
-    }
+    
     render() {
       if (!this.state.isLoaded) {
         return <div />
-      }
+    }
         return (
-          
           <Router>
             <div className="left20px container">	
               <a href='/login'>Login</a> | 
