@@ -22,7 +22,7 @@ class MainView extends React.Component {
   }
     }
     componentDidMount(){
-        fetch("http://localhost:8080/movies")
+        fetch("https://ryanm-movies.herokuapp.com/")
       .then(res => res.json())
       .then(
         (result) => {
