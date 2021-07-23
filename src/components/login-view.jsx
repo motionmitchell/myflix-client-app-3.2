@@ -26,8 +26,7 @@ class LoginView extends React.Component {
             email: this.state.email, 
             password: this.state.password 
         };
-      //  alert(this.props.server);
-        fetch(this.props.server+"users/login",
+        fetch("http://localhost:8080/users/login",
         {
             method: "POST",
             headers: {'Content-Type': 'application/json'},

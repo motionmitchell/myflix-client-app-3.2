@@ -1,5 +1,6 @@
 import React from "react";
-import {Container, Row, Col, Button} from 'react-bootstrap';
+import {Link} from "react-router-dom";
+import {Container, Row, Col} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 class MovieCard extends React.Component {
     constructor(props) {
@@ -20,8 +21,7 @@ class MovieCard extends React.Component {
             <Container>
             {this.props.movies.map ((movie, idx)=>(
                 <Row className="show-grid">
-                <Col className='btn-light'><Button className='btn-light btn-sm'
-                 onClick={()=>this.showMovie(idx)}>{movie.description}</Button>
+                <Col className='btn-light'><Link to={`/movies/${movie.id}`}>{movie.description}</Link>
                 </Col>               
                  <Col  className='btn-light'>
                      {movie.director.name}
