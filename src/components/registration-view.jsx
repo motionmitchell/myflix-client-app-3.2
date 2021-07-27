@@ -33,7 +33,7 @@ class RegistrationView extends React.Component {
             fullname: this.state.fullname,
             birthdate: this.state.birthdate
         };
-        fetch("http://localhost:8080/users/register",
+        fetch("https://ryanm-movies.herokuapp.com/users/register",
         {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -43,14 +43,16 @@ class RegistrationView extends React.Component {
         .then((result) => {
             console.log(result);
             //alert(result)
-            if (result["email"]==undefined)
+            if (result["message"]==undefined)
             {
-                alert("login failed");
+                alert ("registration failed");
             }else {
-                alert ("Login successful");
+                alert(result.message);
+                
             }
           },
           (error) => {
+              console.log(error);
               alert("error");
             this.setState({
               isLoaded: true,
