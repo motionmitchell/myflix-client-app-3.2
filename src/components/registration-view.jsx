@@ -45,10 +45,9 @@ class RegistrationView extends React.Component {
             //alert(result)
             if (result["message"]==undefined)
             {
-                alert ("registration failed");
-            }else {
                 alert(result.message);
-                
+            }else {
+                alert ("registration failed");
             }
           },
           (error) => {
