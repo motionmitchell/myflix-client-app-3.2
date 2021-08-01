@@ -72,6 +72,7 @@ class MainView extends React.Component {
     }
         return (
           <Router>
+		  <p>Version: 3.5</p>
             <div className="left20px container">	
               <a href='/login'>Login</a> | 
               <a href='/register'> Register</a> | 
