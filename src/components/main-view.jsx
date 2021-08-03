@@ -1,27 +1,39 @@
 import React from "react";
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+
 import MovieCard from "./movie-card";
 import MovieView from "./movie-view";
 import LoginView from "./login-view";
-import DirectorView from "./director-view";
-import GenreView from "./genre-view";
 import RegistrationView from "./registration-view";
 import 'bootstrap/dist/css/bootstrap.css';
+require('dotenv').config();
 class MainView extends React.Component {
     constructor(props) {
         super(props);
+      
+        this.SERVER_ROOT_URL = "https://ryanm-movies.herokuapp.com/";
         
-		//console.log (props);
-    this.state = {
-      movies:[],
-      movie:undefined,
-      director:undefined,
-      genre: undefined,
-      isLoaded:false,
-      error:null
-  }
+        this.state = {
+            movies:[],
+            movie:undefined,
+            director:undefined,
+            genre: undefined,
+            isLoaded:false,
+            error:null
+        }
+
     }
-    componentDidMount(){
+	  
+
+    //if ((this.SERVER_BASE_URL+"").length <4 || SERVER_BASE_URL.charAt(0)!=='h')
+    
+    
+    //SERVER_BASE_URL="http://localhost:8080/";
+ componentDidMount(){
+  this.loadData();
+ }
+    loadData(){
+    //  alert(this.SERVER_BASE_URL);
         fetch("https://ryanm-movies.herokuapp.com/movies")
       .then(res => res.json())
       .then(
@@ -29,9 +41,9 @@ class MainView extends React.Component {
           this.setState({
             isLoaded: true,
             movies: result
-
           });
           console.log (result[0]);
+         // alert("did mount");
           //window.location.replace("/login");
         },
         // Note: it's important to handle errors here
@@ -51,35 +63,35 @@ class MainView extends React.Component {
 
         console.log (this.state.movies[idx]);
         this.setState({movie:this.state.movies[idx]})
-       
+
     }
     showGenre = (idx)=>{
 
       console.log (this.state.movies[idx]);
       this.setState({genre:this.state.movies[idx].genre})
-     
+
   }
     showDirector = (idx) => {
 
       console.log (this.state.movies[idx]);
       this.setState({director:this.state.movies[idx].director})
-     
+
   }
-    
+  
     render() {
-      if (!this.state.isLoaded) {
-        return <div />
-    }
+        if (!this.state.isLoaded) {
+            return <div />
+        }
         return (
           <Router>
-		  <p>Version: 3.5</p>
+            <div>version: 3.6</div>
             <div className="left20px container">	
               <a href='/login'>Login</a> | 
               <a href='/register'> Register</a> | 
               <a href='/movies'> Movies</a>
               <hr/>
             </div>
-            <Switch>
+                <Switch>
             <Route exact path="/">
               
             </Route>

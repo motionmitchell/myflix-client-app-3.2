@@ -26,7 +26,8 @@ class LoginView extends React.Component {
             email: this.state.email, 
             password: this.state.password 
         };
-        fetch("https://ryanm-movies.herokuapp.com/users/login",
+      //  alert(this.props.server);
+        fetch(this.props.server+"users/login",
         {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -44,8 +45,6 @@ class LoginView extends React.Component {
             }
           },
           (error) => {
-             
-              console.log(error);
               alert("error");
             this.setState({
               isLoaded: true,
