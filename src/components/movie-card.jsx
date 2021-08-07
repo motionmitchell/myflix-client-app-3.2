@@ -10,6 +10,32 @@ class MovieCard extends React.Component {
             
         }
     }
+    componentDidMount(){
+      //alert(this.props.server);
+        fetch(this.props.server+"user")
+        .then(res => res.json())
+        .then(
+          (result) => {
+            console.log ("card-user", result);
+            if (result["_id"]==undefined) // no user logged in redirect to login page.
+            {
+
+                window.location.href="/login";
+            }
+          }
+          ,
+          // Note: it's important to handle errors here
+          // instead of a catch() block so that we don't swallow
+          // exceptions from actual bugs in components.
+          (error) => {
+              alert("error fetch movies");
+            this.setState({
+              isLoaded: true,
+              error
+            });
+          }
+        );
+    }
     showMovie = (id)=>{
         
 		this.props.setMovieView(id);

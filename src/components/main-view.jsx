@@ -1,10 +1,15 @@
 import React from "react";
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 
+
+import { navigate } from "@reach/router"
 import MovieCard from "./movie-card";
 import MovieView from "./movie-view";
 import LoginView from "./login-view";
 import RegistrationView from "./registration-view";
+import UserProfile from "./profile-view";
+import DirectorView from "./director-view";
+import GenreView from "./genre-view";
 import 'bootstrap/dist/css/bootstrap.css';
 require('dotenv').config();
 class MainView extends React.Component {
@@ -14,12 +19,14 @@ class MainView extends React.Component {
         this.SERVER_ROOT_URL = "https://ryanm-movies.herokuapp.com/";
         
         this.state = {
+            SERVER_ROOT_URL: "https://ryanm-movies.herokuapp.com/",
             movies:[],
             movie:undefined,
             director:undefined,
             genre: undefined,
             isLoaded:false,
-            error:null
+            error:null,
+            token:sessionStorage.getItem("token")
         }
 
     }
@@ -33,27 +40,28 @@ class MainView extends React.Component {
   this.loadData();
  }
     loadData(){
-    //  alert(this.SERVER_BASE_URL);
-        fetch("https://ryanm-movies.herokuapp.com/movies")
+      alert(this.state.SERVER_ROOT_URL);
+        fetch(this.state.SERVER_ROOT_URL+"movies")
       .then(res => res.json())
       .then(
         (result) => {
+          console.log ("get movies", result);
           this.setState({
             isLoaded: true,
             movies: result
           });
-          console.log (result[0]);
-         // alert("did mount");
-          //window.location.replace("/login");
+         // console.log (result[0]);
+        
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
         // exceptions from actual bugs in components.
         (error) => {
-            alert("error");
+            alert("error!!");
+            console.log ("error!!", error);
           this.setState({
             isLoaded: true,
-            error
+            error:error
           });
         }
       );
@@ -75,9 +83,17 @@ class MainView extends React.Component {
 
       console.log (this.state.movies[idx]);
       this.setState({director:this.state.movies[idx].director})
-
   }
-  
+  setToken = (token)=>{
+    this.setState({token:token});
+   
+    if (token !=null)
+        document.getElementById("moviesLink").click();
+  }
+  logoutUser = ()=>{
+    localStorage.removeItem("token");
+    this.setState({token:null});
+  }
     render() {
         if (!this.state.isLoaded) {
             return <div />
@@ -86,36 +102,71 @@ class MainView extends React.Component {
           <Router>
             <div>version: 3.6</div>
             <div className="left20px container">	
-              <a href='/login'>Login</a> | 
-              <a href='/register'> Register</a> | 
-              <a href='/movies'> Movies</a>
+              {this.state.token?
+              <span>
+                <Link to={"/logout"}> Logout</Link> | 
+               |<Link to={"/movies"} id='moviesLink'> Movies</Link> 
+               |<Link to={"/profile"}> Profile</Link>
+                </span>
+              :
+              <span>
+              <Link to={"/login"}> Login</Link> | 
+              <Link to={"/register"}> Register</Link> 
+              </span>
+              }
               <hr/>
             </div>
                 <Switch>
             <Route exact path="/">
               
             </Route>
+            
             <Route path="/login">
-              <LoginView server={this.SERVER_ROOT_URL}/>
+            
+              <LoginView server={this.state.SERVER_ROOT_URL} setToken={this.setToken}/>
+              
             </Route>
-
+            <Route path="/logout">
+           
+            <LoginView server={this.state.SERVER_ROOT_URL} setToken={this.setToken}/>
+            
+            </Route>
             <Route exact path="/movies">
             
             
             <MovieCard 
               movies={this.state.movies}
               setMovieView={this.showMovie}
-             
+              server={this.state.SERVER_ROOT_URL}
             />
             </Route>
             
         
             <Route path="/movies/:movieId" 
               render={({match})=> (
-                <MovieView movie={this.state.movies.find((m)=>`${m.id}`===match.params.movieId)}/>
+                <MovieView movie={this.state.movies.find((m)=>`${m.id}`===match.params.movieId)} server={this.state.SERVER_ROOT_URL}/>
               )}
+
+
             />
-              
+             <Route path="/director/:dirName" 
+              render={({match})=> (
+                <DirectorView dirName={match.params.dirName} server={this.state.SERVER_ROOT_URL}/>
+              )}
+
+
+            />
+            <Route path="/genre/:genre" 
+              render={({match})=> (
+                <GenreView genre={match.params.genre} server={this.state.SERVER_ROOT_URL}/>
+              )}
+
+
+            />
+            <Route path="/profile">
+              <UserProfile server={this.SERVER_ROOT_URL}/>
+            </Route>
+         
             <Route path="/register">
               <RegistrationView server={this.SERVER_ROOT_URL}/>
             </Route>

@@ -2,11 +2,21 @@ import React from "react";
 class LoginView extends React.Component {
     constructor(props) {
         super(props);
+        console.log ("constructor", props)
         this.state = {
             email:"",
             password:""
         }
     }
+    componentDidMount (){
+        fetch(this.props.server+"user/logout");
+        sessionStorage.removeItem("token");
+       
+        this.props.setToken(null);
+    }
+    componentWillReceiveProps(props) {
+        console.log ("componentWillReceiveProps",props )
+      }
     emailChangeHandler= (e)=>{
        // alert(e.target.value);
         this.setState ({email:e.target.value});
@@ -18,7 +28,7 @@ class LoginView extends React.Component {
     login = ()=>{
         const email = this.state.email;
         const pwd = this.state.password;
-        alert(email+"/"+pwd);
+      //  alert(email+"/"+pwd);
     }
     
     auth = ()=>{
@@ -41,7 +51,11 @@ class LoginView extends React.Component {
             {
                 alert("login failed");
             }else {
+                this.props.setToken (result.token);
+                sessionStorage.setItem("token", result.token);
+                sessionStorage.setItem("user", result.user);
                 alert ("Login successful");
+               // this.props.history.push('/movies')
             }
           },
           (error) => {

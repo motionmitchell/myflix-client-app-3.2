@@ -16,10 +16,16 @@ class ProfileView extends React.Component {
     }
     //{"favorites":[],"_id":"60db34ca58195a17f8d54340","password":"2c9341ca4cf3d87b9e4eb905d6a3ec45","fullname":"Ryan Tester","birthday":"1985-03-03T00:00:00.000Z","email":"bob@test.com","__v":0}
     componentDidMount(){
-        fetch("http://localhost:8080/user")
+       // alert(this.props.server);
+        fetch(this.props.server+"user")
         .then(res => res.json())
         .then(
           (result) => {
+
+            if (result["_id"]==undefined) // no user logged in redirect to login page.
+            {
+                window.location.href="/login";
+            }
             this.setState({
               user: result,
               email:result.email,
@@ -48,11 +54,9 @@ class ProfileView extends React.Component {
         // fetch current user;
       }
     emailChangeHandler= (e)=>{
-       
         this.setState ({email:e.target.value});
     }
     passwordChangeHandler= (e)=>{
-       
          this.setState ({password:e.target.value});
     }
     fullnameChangeHandler= (e)=>{
@@ -64,16 +68,24 @@ class ProfileView extends React.Component {
         this.setState ({birthdate:e.target.value});
     }
     removeFavorites=(id)=>{
-        alert(id);
-         fetch ("http://localhost:8080/user/movie/remove/"+id) .then(res => res.json())
+        alert(id); ///user/movie/remove/:id
+         fetch (this.props.server+"user/movie/remove/"+id) .then(res => res.json())
          .then((result) => {
  console.log(result.message);
              alert(result.message);
              window.location.reload();
          });
      }
+     unRegister=(id)=>{
+      //  alert(id);
+         fetch (this.props.server+"user/unreg/"+id) .then(res => res.json())
+         .then((result) => {
+ console.log(result.message);
+             alert(result.message);
+             window.location.href="/login";
+         });
+     }
     save = ()=>{
-       
         const body = { 
             _id: this.state.user._id,
             email: this.state.email, 
@@ -82,7 +94,7 @@ class ProfileView extends React.Component {
             birthdate: this.state.birthdate,
             favorites: this.state.favoritesId
         };
-        fetch("http://localhost:8080/users/update",
+        fetch(this.props.server+"users/update",
         {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -92,11 +104,11 @@ class ProfileView extends React.Component {
         .then((result) => {
             console.log(result);
             //alert(result)
-            if (result["email"]==undefined)
+            if (result["message"]==undefined)
             {
-                alert("login failed");
+                alert("update failed");
             }else {
-                alert ("Login successful");
+                alert (result.message);
             }
           },
           (error) => {
@@ -127,7 +139,10 @@ class ProfileView extends React.Component {
                  value={this.state.password} onChange={this.passwordChangeHandler}/>
                 </p>
            
-                <p><button onClick={this.save}>Save</button></p>
+                <p>
+                    <button onClick={this.save}>Save</button>
+                    <button onClick={this.unRegister}>Un Register</button>
+                </p>
             <div id='divUserFavorites'>
                 <br/>
                 {this.state.favorites.map ((movie, idx)=>(
