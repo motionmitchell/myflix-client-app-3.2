@@ -1,89 +1,92 @@
 import React from "react";
+import { Container, Row, Col } from 'react-bootstrap';
 class LoginView extends React.Component {
     constructor(props) {
         super(props);
-        console.log ("constructor", props)
+        console.log("constructor", props)
         this.state = {
-            email:"",
-            password:""
+            email: "",
+            password: "",
+            message: ""
         }
     }
-    componentDidMount (){
-        fetch(this.props.server+"user/logout");
+    componentDidMount() {
+        console.log("log in");
+        fetch(this.props.server + "user/logout");
         sessionStorage.removeItem("token");
-       
+
         this.props.setToken(null);
     }
     componentWillReceiveProps(props) {
-        console.log ("componentWillReceiveProps",props )
-      }
-    emailChangeHandler= (e)=>{
-       // alert(e.target.value);
-        this.setState ({email:e.target.value});
+        console.log("componentWillReceiveProps", props)
     }
-    passwordChangeHandler= (e)=>{
-        // alert(e.target.value);
-         this.setState ({password:e.target.value});
-     }
-    login = ()=>{
+    emailChangeHandler = (e) => {
+
+        this.setState({ email: e.target.value });
+    }
+    passwordChangeHandler = (e) => {
+
+        this.setState({ password: e.target.value });
+    }
+    login = () => {
         const email = this.state.email;
         const pwd = this.state.password;
-      //  alert(email+"/"+pwd);
+
     }
-    
-    auth = ()=>{
-        const body = { 
-            email: this.state.email, 
-            password: this.state.password 
+
+    auth = () => {
+        const body = {
+            email: this.state.email,
+            password: this.state.password
         };
-      //  alert(this.props.server);
-        fetch(this.props.server+"users/login",
-        {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(body)
-        })
-        .then(res => res.json())
-        .then((result) => {
-            console.log(result);
-            //alert(result)
-            if (result["token"]==undefined)
+
+        fetch(this.props.server + "users/login",
             {
-                alert("login failed");
-            }else {
-                this.props.setToken (result.token);
-                sessionStorage.setItem("token", result.token);
-                sessionStorage.setItem("user", result.user);
-                alert ("Login successful");
-               // this.props.history.push('/movies')
-            }
-          },
-          (error) => {
-              alert("error");
-            this.setState({
-              isLoaded: true,
-              error
-            });
-          }
-        );
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            })
+            .then(res => res.json())
+            .then((result) => {
+                console.log(result);
+
+                if (result["token"] == undefined) {
+                    this.setState({ message: "login failed" });
+                } else {
+                    this.props.setToken(result.token);
+                    sessionStorage.setItem("token", result.token);
+                    sessionStorage.setItem("user", result.user);
+
+
+                }
+            },
+                (error) => {
+
+                    this.setState({
+                        isLoaded: true,
+                        message: "login failed"
+                    });
+                }
+            );
     }
     render() {
         return (
-        <div className="left20px">	
-            
-        <h1>Login Page</h1>
-    
-       
-        <p><input type="text" name="email" id="email" value={this.email} onChange={this.emailChangeHandler}/>
-        </p>
-                <p><input type="text" name="password" id="password" placeholder='password' 
-                 value={this.password} onChange={this.passwordChangeHandler}/> 
-                   </p>
-                   <br/>
-            <button onClick={this.auth}>Login</button>
+            <div>
+                <Container>
+                    <h1>Login Page</h1>
+                    <Row><Col>Username/email:<br /><input type="text" name="email" id="email" placeholder='username/email'
+                        value={this.email} onChange={this.emailChangeHandler} />
+                    </Col></Row>
 
-            
-        </div>
+                    <Row><Col>Password:<br /><input type="password" name="password" id="password" placeholder='password'
+                        value={this.password} onChange={this.passwordChangeHandler} />
+                    </Col></Row>
+                    <br />
+                    <button onClick={this.auth}>Login</button>
+                    <br />
+                    <div>{this.state.message}</div>
+                </Container>
+            </div>
         );
     }
 

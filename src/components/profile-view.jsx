@@ -1,163 +1,187 @@
 import React from "react";
-import {Container, Row, Col, Button} from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.css';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+
 class ProfileView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            email:"",
-            password:"",
-            fullname:"",
-            birthdate:"",
-            favorites:[],
-            favoritesId:[],
-            user:[]
+            email: "",
+            password: "",
+            fullname: "",
+            birthdate: "",
+            favorites: [],
+            favoritesId: [],
+            user: [],
+            message: ""
         }
     }
-    //{"favorites":[],"_id":"60db34ca58195a17f8d54340","password":"2c9341ca4cf3d87b9e4eb905d6a3ec45","fullname":"Ryan Tester","birthday":"1985-03-03T00:00:00.000Z","email":"bob@test.com","__v":0}
-    componentDidMount(){
-       // alert(this.props.server);
-        fetch(this.props.server+"user")
-        .then(res => res.json())
-        .then(
-          (result) => {
+    componentDidMount() {
+        fetch(this.props.server + "user")
+            .then(res => res.json())
+            .then(
+                (result) => {
 
-            if (result["_id"]==undefined) // no user logged in redirect to login page.
-            {
-                window.location.href="/login";
-            }
-            this.setState({
-              user: result,
-              email:result.email,
-              fullname:result.fullname,
-              birthdate:result.birthday,
-                favorites:result.favorites,
-                favoritesId:result.favoritesId
-            });
+                    if (result["_id"] == undefined) // no user logged in redirect to login page.
+                    {
+                        window.location.href = "/login";
+                    }
+                    this.setState({
+                        user: result,
+                        email: result.email,
+                        fullname: result.fullname,
+                        birthdate: result.birthday,
+                        favorites: result.favorites,
+                        favoritesId: result.favoritesId
+                    });
 
-            //alert(result.fullname);
-           console.log (result);
-            //window.location.replace("/login");
-          },
-          // Note: it's important to handle errors here
-          // instead of a catch() block so that we don't swallow
-          // exceptions from actual bugs in components.
-          (error) => {
-              alert("error");
-            this.setState({
-              isLoaded: true,
-              error
-            });
-          }
-        );
-  
+                    console.log(result);
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    alert("error");
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                }
+            );
+
         // fetch current user;
-      }
-    emailChangeHandler= (e)=>{
-        this.setState ({email:e.target.value});
     }
-    passwordChangeHandler= (e)=>{
-         this.setState ({password:e.target.value});
+    emailChangeHandler = (e) => {
+        this.setState({ email: e.target.value });
     }
-    fullnameChangeHandler= (e)=>{
-       
-        this.setState ({fullname:e.target.value});
+    passwordChangeHandler = (e) => {
+        this.setState({ password: e.target.value });
     }
-    birthdateChangeHandler= (e)=>{
-       
-        this.setState ({birthdate:e.target.value});
+    fullnameChangeHandler = (e) => {
+
+        this.setState({ fullname: e.target.value });
     }
-    removeFavorites=(id)=>{
+    birthdateChangeHandler = (e) => {
+
+        this.setState({ birthdate: e.target.value });
+    }
+    removeFavorites = (id) => {
         alert(id); ///user/movie/remove/:id
-         fetch (this.props.server+"user/movie/remove/"+id) .then(res => res.json())
-         .then((result) => {
- console.log(result.message);
-             alert(result.message);
-             window.location.reload();
-         });
-     }
-     unRegister=(id)=>{
-      //  alert(id);
-         fetch (this.props.server+"user/unreg/"+id) .then(res => res.json())
-         .then((result) => {
- console.log(result.message);
-             alert(result.message);
-             window.location.href="/login";
-         });
-     }
-    save = ()=>{
-        const body = { 
+        fetch(this.props.server + "user/movie/remove/" + id).then(res => res.json())
+            .then((result) => {
+                console.log(result.message);
+                alert(result.message);
+                window.location.reload();
+            });
+    }
+    unRegister = (id) => {
+        //  alert(id);
+        fetch(this.props.server + "user/unreg/" + id).then(res => res.json())
+            .then((result) => {
+                console.log(result.message);
+                alert(result.message);
+                window.location.href = "/login";
+            });
+    }
+    save = () => {
+        const body = {
             _id: this.state.user._id,
-            email: this.state.email, 
-            password: this.state.password ,
+            email: this.state.email,
+            password: this.state.password,
             fullname: this.state.fullname,
             birthdate: this.state.birthdate,
             favorites: this.state.favoritesId
         };
-        fetch(this.props.server+"users/update",
-        {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(body)
-        })
-        .then(res => res.json())
-        .then((result) => {
-            console.log(result);
-            //alert(result)
-            if (result["message"]==undefined)
+        fetch(this.props.server + "users/update",
             {
-                alert("update failed");
-            }else {
-                alert (result.message);
-            }
-          },
-          (error) => {
-              alert("error");
-            this.setState({
-              isLoaded: true,
-              error
-            });
-          }
-        );
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            })
+            .then(res => res.json())
+            .then((result) => {
+                console.log(result);
+                //alert(result)
+                if (result["message"] == undefined) {
+                    alert("update failed");
+                } else {
+                    alert(result.message);
+                }
+            },
+                (error) => {
+                    this.setState({ message: "error loading profile" });
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                }
+            );
     }
     render() {
         return (
-        <div className="left20px">	
+            <div >
+                <Container>
+                    <h1>Register Page</h1>
 
-            <h1>Register Page</h1>
-
-            <p><input type="text" name="email" id="email" placeholder="email"
-                value={this.state.email} onChange={this.emailChangeHandler}/></p>
-               
-              <p> <input type="text" name="fullname" id="fullname" placeholder="fullname"
-                    value={this.state.fullname} onChange={this.fullnameChangeHandler}/>
-                </p>
-              	<p><input type="text" name="birthdate" placeholder="birthdate"
-                  value={this.state.birthdate} onChange={this.birthdateChangeHandler}/>
-                </p>
-                <p><input type="text" name="password" id="password" placeholder="password"
-                 value={this.state.password} onChange={this.passwordChangeHandler}/>
-                </p>
-           
-                <p>
-                    <button onClick={this.save}>Save</button>
-                    <button onClick={this.unRegister}>Un Register</button>
-                </p>
-            <div id='divUserFavorites'>
-                <br/>
-                {this.state.favorites.map ((movie, idx)=>(
-                     <Row className="show-grid ">
-                         <Col className='w-100'>
-                    {movie.description}
-                    </Col>
-                    <Col className='btn-light w-100'><Button className='btn-light btn-sm'
-                 onClick={()=>this.removeFavorites(movie.id)}>Remove</Button>
-                </Col> 
-                    
+                    <Row>
+                        <Col>
+                            <input type="text" name="email" id="email" placeholder="email"
+                                value={this.state.email} onChange={this.emailChangeHandler} />
+                        </Col>
                     </Row>
-                ))}
+                    <br />
+
+                    <Row><Col>
+                        <input type="text" name="fullname" id="fullname" placeholder="fullname"
+                            value={this.state.fullname} onChange={this.fullnameChangeHandler} />
+                    </Col>
+                    </Row>
+
+                    <br />
+                    <Row>
+                        <Col>
+                            <input type="text" name="birthdate" placeholder="birthdate"
+                                value={this.state.birthdate} onChange={this.birthdateChangeHandler} />
+                        </Col>
+                    </Row>
+                    <br />
+                    <Row>
+                        <Col>
+                            <input type="text" name="password" id="password" placeholder="password"
+                                value={this.state.password} onChange={this.passwordChangeHandler} />
+                        </Col>
+                    </Row>
+                    <br />
+                    <Row><Col>
+                        <button onClick={this.save}>Save</button>
+                        <button onClick={this.unRegister}>Un Register</button>
+                    </Col>
+                    </Row>
+
+                    <br />
+                    {this.state.favorites.map((movie, idx) => (
+                        <div>
+                            <Row className="show-grid ">
+                                <Col className='w-100'>
+                                    {movie.description}
+                                </Col>
+                            </Row>
+
+                            <Row className='btn-light w-100'>
+                                <Col>
+                                    <Button className='btn-light btn-sm'
+                                        onClick={() => this.removeFavorites(movie.id)}>Remove</Button>
+                                </Col>
+                            </Row>
+                        </div>
+                    ))}
+
+
+
+
+
+                </Container>
+                <div>{this.state.message}</div>
             </div>
-        </div>
         );
     }
 
