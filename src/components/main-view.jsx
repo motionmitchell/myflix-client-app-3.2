@@ -16,7 +16,7 @@ class MainView extends React.Component {
 
     this.state = {
       SERVER_ROOT_URL: "https://ryanm-movies.herokuapp.com/",  // PROD
-      //SERVER_ROOT_URL:"http://localhost:5000/", // DEV
+      //SERVER_ROOT_URL: "http://localhost:5000/", // DEV
       movies: [],
       movie: undefined,
       director: undefined,

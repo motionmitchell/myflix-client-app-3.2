@@ -25,7 +25,8 @@ class RegistrationView extends React.Component {
     birthdateChangeHandler = (e) => {
         this.setState({ birthdate: e.target.value });
     }
-    register = () => {
+    register = (e) => {
+        e.preventDefault();
         const body = {
             email: this.state.email,
             password: this.state.password,
@@ -66,43 +67,49 @@ class RegistrationView extends React.Component {
             <div >
                 <Container>
                     <h1>Register Page</h1>
-                    <Row>
-                        <Col>Email:<br /><input type="text" name="email" id="email" placeholder="email"
-                            value={this.email} onChange={this.emailChangeHandler} />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>Full name:<br />
-                            <input type="text" name="fullname" placeholder="fullname"
-                                value={this.fullname} onChange={this.fullnameChangeHandler} />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>Birthdate:<br />
-                            <input type="date" name="birthdate" placeholder="birthdate (CCYY-MM-DD)"
-                                value={this.birthdate} onChange={this.birthdateChangeHandler} />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>Password:<br />
-                            <input type="password" name="password" id="password" placeholder="password"
-                                value={this.password} onChange={this.passwordChangeHandler} />
-                        </Col>
-                    </Row>
-                    <br />
-                    <Row>
-                        <Col>
-                            <button onClick={this.register}>Register</button>
-                        </Col>
-                    </Row>
+                    <form onSubmit={this.register}>
+                        <Row>
+                            <Col>Email: <br /><input type="email" name="email" id="email" required placeholder="email"
+                                value={this.email} onChange={this.emailChangeHandler} />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>Full name: <br />
+                                <input type="text" name="fullname" required minLength="2" placeholder="fullname"
+                                    value={this.fullname} onChange={this.fullnameChangeHandler} />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>Birthdate: <br />
+                                <input type="date" name="birthdate" required placeholder="birthdate (CCYY-MM-DD)"
+                                    value={this.birthdate} onChange={this.birthdateChangeHandler} />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>Password: <br />
+                                <input type="password" name="password" id="password" required minLength="8" placeholder="password"
+                                    value={this.password} onChange={this.passwordChangeHandler} />
+                            </Col>
+                        </Row>
+                        <br />
+                        <Row>
+                            <Col>
+                                <button>Register</button>
+                            </Col>
+                        </Row>
+                    </form>
                     <hr />
+
                     {this.state.hasErrors ?
                         this.state.errors.map((error) => (
-                            <p>{error.field} : {error.message}</p>
+                            <p>{error.field}: {error.message}</p>
                         )) : <div />
                     }
+
+                    <div>{this.state.message}</div>
+
                 </Container>
-                <div>{this.state.message}</div>
+
             </div>
         );
     }

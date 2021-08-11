@@ -12,7 +12,9 @@ class ProfileView extends React.Component {
             favorites: [],
             favoritesId: [],
             user: [],
-            message: ""
+            message: "",
+            hasErrors: false,
+            errors: []
         }
     }
     componentDidMount() {
@@ -73,16 +75,18 @@ class ProfileView extends React.Component {
                 window.location.reload();
             });
     }
-    unRegister = (id) => {
+    unRegister = (e) => {
         //  alert(id);
-        fetch(this.props.server + "user/unreg/" + id).then(res => res.json())
+        e.preventDefault();
+        fetch(this.props.server + "user/unreg/1").then(res => res.json())
             .then((result) => {
                 console.log(result.message);
                 alert(result.message);
                 window.location.href = "/login";
             });
     }
-    save = () => {
+    save = (e) => {
+        e.preventDefault();
         const body = {
             _id: this.state.user._id,
             email: this.state.email,
@@ -101,7 +105,13 @@ class ProfileView extends React.Component {
             .then((result) => {
                 console.log(result);
                 //alert(result)
-                if (result["message"] == undefined) {
+                if (result.status === -1) {
+                    this.setState({
+                        errors: result.errors,
+                        hasErrors: true
+                    })
+                }
+                else if (result.status < 0) {
                     alert("update failed");
                 } else {
                     alert(result.message);
@@ -120,43 +130,45 @@ class ProfileView extends React.Component {
         return (
             <div >
                 <Container>
-                    <h1>Register Page</h1>
+                    <h1>Profile Page</h1>
+                    <form onSubmit={this.save}>
+                        <Row>
+                            <Col>
+                                <input type="email" name="email" id="email" required placeholder="email"
+                                    value={this.state.email} onChange={this.emailChangeHandler} />
+                            </Col>
+                        </Row>
+                        <br />
 
-                    <Row>
-                        <Col>
-                            <input type="text" name="email" id="email" placeholder="email"
-                                value={this.state.email} onChange={this.emailChangeHandler} />
+                        <Row><Col>
+                            <input type="text" name="fullname" id="fullname" minlength="2" required placeholder="fullname"
+                                value={this.state.fullname} onChange={this.fullnameChangeHandler} />
                         </Col>
-                    </Row>
-                    <br />
+                        </Row>
 
-                    <Row><Col>
-                        <input type="text" name="fullname" id="fullname" placeholder="fullname"
-                            value={this.state.fullname} onChange={this.fullnameChangeHandler} />
-                    </Col>
-                    </Row>
+                        <br />
+                        <Row>
+                            <Col>
+                                <input type="date" name="birthdate" placeholder="birthdate" required
+                                    value={this.state.birthdate} onChange={this.birthdateChangeHandler} />
+                            </Col>
+                        </Row>
+                        <br />
+                        <Row>
+                            <Col>
+                                <input type="password" name="password" id="password" minlength="8" required placeholder="password"
+                                    value={this.state.password} onChange={this.passwordChangeHandler} />
+                            </Col>
+                        </Row>
+                        <br />
+                        <Row><Col>
+                            <button>Save</button>
 
-                    <br />
-                    <Row>
-                        <Col>
-                            <input type="text" name="birthdate" placeholder="birthdate"
-                                value={this.state.birthdate} onChange={this.birthdateChangeHandler} />
+                            <button onClick={this.unRegister}>Un Register</button>
                         </Col>
-                    </Row>
-                    <br />
-                    <Row>
-                        <Col>
-                            <input type="text" name="password" id="password" placeholder="password"
-                                value={this.state.password} onChange={this.passwordChangeHandler} />
-                        </Col>
-                    </Row>
-                    <br />
-                    <Row><Col>
-                        <button onClick={this.save}>Save</button>
-                        <button onClick={this.unRegister}>Un Register</button>
-                    </Col>
-                    </Row>
 
+                        </Row>
+                    </form>
                     <br />
                     {this.state.favorites.map((movie, idx) => (
                         <div>
@@ -177,11 +189,18 @@ class ProfileView extends React.Component {
 
 
 
+                    {this.state.hasErrors ?
+                        this.state.errors.map((error) => (
+                            <p>{error.field}: {error.message}</p>
+                        )) : <div />
+                    }
+
+                    <div>{this.state.message}</div>
 
 
                 </Container>
-                <div>{this.state.message}</div>
-            </div>
+
+            </div >
         );
     }
 

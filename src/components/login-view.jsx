@@ -74,7 +74,7 @@ class LoginView extends React.Component {
             <div>
                 <Container>
                     <h1>Login Page</h1>
-                    <Row><Col>Username/email:<br /><input type="text" name="email" id="email" placeholder='username/email'
+                    <Row><Col>Email:<br /><input type="text" name="email" id="email" placeholder='email'
                         value={this.email} onChange={this.emailChangeHandler} />
                     </Col></Row>
 
