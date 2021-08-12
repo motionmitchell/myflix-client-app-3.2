@@ -23,7 +23,7 @@ class ProfileView extends React.Component {
             .then(
                 (result) => {
 
-                    if (result["_id"] == undefined) // no user logged in redirect to login page.
+                    if (result["_id"] === undefined) // no user logged in redirect to login page.
                     {
                         window.location.href = "/login";
                     }

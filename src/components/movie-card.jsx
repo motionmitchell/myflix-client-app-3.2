@@ -21,7 +21,7 @@ class MovieCard extends React.Component {
       .then(
         (result) => {
           console.log("card-user", result);
-          if (result["_id"] == undefined) // no user logged in redirect to login page.
+          if (result["_id"] === undefined) // no user logged in redirect to login page.
           {
             window.location.href = "/login";
           }

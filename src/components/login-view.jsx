@@ -28,13 +28,9 @@ class LoginView extends React.Component {
 
         this.setState({ password: e.target.value });
     }
-    login = () => {
-        const email = this.state.email;
-        const pwd = this.state.password;
 
-    }
-
-    auth = () => {
+    auth = (e) => {
+        e.preventDefault();
         const body = {
             email: this.state.email,
             password: this.state.password
@@ -50,7 +46,7 @@ class LoginView extends React.Component {
             .then((result) => {
                 console.log(result);
 
-                if (result["token"] == undefined) {
+                if (result["token"] === undefined) {
                     this.setState({ message: "login failed" });
                 } else {
                     this.props.setToken(result.token);
@@ -73,17 +69,19 @@ class LoginView extends React.Component {
         return (
             <div>
                 <Container>
-                    <h1>Login Page</h1>
-                    <Row><Col>Email:<br /><input type="text" name="email" id="email" placeholder='email'
-                        value={this.email} onChange={this.emailChangeHandler} />
-                    </Col></Row>
+                    <form onSubmit={this.auth}>
+                        <h1>Login Page</h1>
+                        <Row><Col>Email:<br /><input type="email" name="email" id="email" required placeholder='email'
+                            value={this.email} onChange={this.emailChangeHandler} />
+                        </Col></Row>
 
-                    <Row><Col>Password:<br /><input type="password" name="password" id="password" placeholder='password'
-                        value={this.password} onChange={this.passwordChangeHandler} />
-                    </Col></Row>
-                    <br />
-                    <button onClick={this.auth}>Login</button>
-                    <br />
+                        <Row><Col>Password:<br /><input type="password" name="password" id="password" minLength="8" required placeholder='password'
+                            value={this.password} onChange={this.passwordChangeHandler} />
+                        </Col></Row>
+                        <br />
+                        <button>Login</button>
+                        <br />
+                    </form>
                     <div>{this.state.message}</div>
                 </Container>
             </div>
