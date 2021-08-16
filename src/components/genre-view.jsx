@@ -1,77 +1,68 @@
 import React from "react";
-import 'bootstrap/dist/css/bootstrap.css';
+import { getMoviesByGenre } from '../reducer';
+import { connect } from 'react-redux';
 import { Container, Row, Col } from 'react-bootstrap';
+
 class GenreView extends React.Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.state = {
-      genre: {},
-      movies: [],
-      isLoaded: false
-    }
-  }
-  componentDidMount() {
-    const genre = this.props.genre;
-
-    fetch(this.props.server + "movies/genre/" + genre)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-
-          this.setState({
-            movies: result,
-            genre: result[0].genre,
-            isLoaded: true
-          });
-
-
-          console.log(result);
-
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          alert("error");
-          this.setState({
-            isLoaded: true,
-            error
-          });
+        this.state = {
+            genre: this.props.genre,
+            movies: [],
+            isLoaded: false
         }
-      );
-
-    // fetch current user;
-  }
-  render() {
-    if (!this.state.isLoaded) {
-      return (<div>loading...</div>)
     }
-    return (
+    componentDidMount() {
+        this.props.getMoviesByGenre({ genre: this.props.genre }).then((data) => {
+            console.log("done", data);
+            this.setState(
+                {
+                    genre: data.payload.movies[0].genre,
+                    movies: data.payload.movies,
+                    isLoaded: true
+                });
 
+        })
+    }
+    render() {
+        if (!this.state.isLoaded) {
+            return ("<div>loading...</div>");
+        }
+        return (<div>
 
-      <div>
-        <Container>
-          <Row><Col>Gengre: {this.state.genre.category}</Col></Row>
+            <Container>
+                <Row><Col>Genre: {this.state.genre.category}</Col></Row>
+                {this.state.movies.map((movie, idx) => (
+                    <Row className="show-grid">
+                        <Col className='btn-light'>{movie.description}
+                        </Col>
+                        <Col className='btn-light'>
+                            {movie.director.name}
 
+                        </Col>
+                        <Col className='btn-light'>
+                            {movie.genre.category}
+                        </Col>
+                    </Row>
+                ))}
+            </Container>
 
-
-          {this.state.movies.map((movie, idx) => (
-            <Row className="show-grid">
-              <Col className='btn-light'>{movie.description}
-              </Col>
-              <Col className='btn-light'>
-                {movie.director.name}
-
-              </Col>
-              <Col className='btn-light'>
-                {movie.genre.category}
-              </Col>
-            </Row>
-          ))}
-        </Container>
-      </div>);
-  }
+        </div>);
+    }
 }
-export default GenreView;
+const mapStateToProps = (state) => {
+    return {
+        movies: state.movies
+    }
+}
+const mapDispatchToProps = (dispatch, ownProps) => {
+    return {
+        getMoviesByGenre: name => dispatch(getMoviesByGenre(name))
+    }
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(GenreView)

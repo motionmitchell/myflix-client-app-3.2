@@ -1,69 +1,55 @@
 import React from "react";
+import { connect } from 'react-redux';
+import { login } from '../reducer';
 import { Container, Row, Col } from 'react-bootstrap';
+
 class LoginView extends React.Component {
     constructor(props) {
         super(props);
-        console.log("constructor", props)
         this.state = {
             email: "",
-            password: "",
-            message: ""
+            password: ""
         }
     }
     componentDidMount() {
         console.log("log in");
-        fetch(this.props.server + "user/logout");
+        //   fetch(this.props.server + "user/logout");
         sessionStorage.removeItem("token");
 
         this.props.setToken(null);
     }
-    componentWillReceiveProps(props) {
-        console.log("componentWillReceiveProps", props)
-    }
     emailChangeHandler = (e) => {
-
+        // alert(e.target.value);
         this.setState({ email: e.target.value });
     }
     passwordChangeHandler = (e) => {
-
+        // alert(e.target.value);
         this.setState({ password: e.target.value });
     }
+
 
     auth = (e) => {
         e.preventDefault();
         const body = {
             email: this.state.email,
-            password: this.state.password
-        };
+            password: this.state.password,
+            message: ""
+        }
+        console.log("auth", body)
+        //   alert(JSON.stringify(body));
+        this.props.login({ auth: body }).then((result) => {
 
-        fetch(this.props.server + "users/login",
-            {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            })
-            .then(res => res.json())
-            .then((result) => {
-                console.log(result);
-
-                if (result["token"] === undefined) {
-                    this.setState({ message: "login failed" });
-                } else {
-                    this.props.setToken(result.token);
-                    sessionStorage.setItem("token", result.token);
-                    sessionStorage.setItem("user", result.user);
-
-
-                }
-            },
-                (error) => {
-
-                    this.setState({
-                        isLoaded: true,
-                        message: "login failed"
-                    });
-                }
-            );
+            const r = result.payload.msg;
+            console.log("done", r);
+            if (r["token"] === undefined) {
+                this.setState({ message: "login failed" });
+            } else {
+                this.props.setToken(result.token);
+                sessionStorage.setItem("token", result.token);
+                sessionStorage.setItem("user", result.user);
+                window.location.href = "/movies";
+            }
+        })
     }
     render() {
         return (
@@ -89,4 +75,23 @@ class LoginView extends React.Component {
     }
 
 }
-export default LoginView;
+const mapStateToProps = (state) => {
+    //  console.log("mapStateToProps.movies:", state.movies);
+    return {
+        user: {}
+    }
+}
+const mapDispatchToProps = (dispatch, ownProps) => {
+
+    return {
+        login: auth => dispatch(login(auth))
+    }
+
+    // console.log("mapDispatchToProps",getMovies);
+
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(LoginView)

@@ -1,4 +1,6 @@
 import React from "react";
+import { connect } from 'react-redux';
+import { register } from '../reducer';
 import { Container, Row, Col } from 'react-bootstrap';
 class RegistrationView extends React.Component {
     constructor(props) {
@@ -7,22 +9,23 @@ class RegistrationView extends React.Component {
             email: "",
             password: "",
             fullname: "",
-            birthdate: "",
-            errors: [],
-            hasErrors: false,
-            message: ""
+            birthdate: ""
         }
     }
     emailChangeHandler = (e) => {
+
         this.setState({ email: e.target.value });
     }
     passwordChangeHandler = (e) => {
+
         this.setState({ password: e.target.value });
     }
     fullnameChangeHandler = (e) => {
+
         this.setState({ fullname: e.target.value });
     }
     birthdateChangeHandler = (e) => {
+
         this.setState({ birthdate: e.target.value });
     }
     register = (e) => {
@@ -33,34 +36,22 @@ class RegistrationView extends React.Component {
             fullname: this.state.fullname,
             birthdate: this.state.birthdate
         };
-        fetch(this.props.server + "users/register",
-            {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            })
-            .then(res => res.json())
-            .then((result) => {
-                console.log(result);
-                if (result.status === -1) {
-                    this.setState({
-                        errors: result.errors,
-                        hasErrors: true
-                    })
-                } else if (result.status === -2) {
-                    this.setState({ message: result.message });
-                } else {
-                    this.setState({ message: result.message });
-                    window.location.href = "/login";
-                }
-            },
-                (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        message: "error with registration"
-                    });
-                }
-            );
+
+        this.props.register({ reg: body }).then((resp) => {
+            const result = resp.payload.msg;
+            console.log("result", result);
+            if (result.status === -1) {
+                this.setState({
+                    errors: result.errors,
+                    hasErrors: true
+                })
+            } else if (result.status === -2) {
+                this.setState({ message: result.message });
+            } else {
+                this.setState({ message: result.message });
+                window.location.href = "/login";
+            }
+        })
     }
     render() {
         return (
@@ -113,5 +104,25 @@ class RegistrationView extends React.Component {
             </div>
         );
     }
+
 }
-export default RegistrationView;
+const mapStateToProps = (state) => {
+    //  console.log("mapStateToProps.movies:", state.movies);
+    return {
+        user: {}
+    }
+}
+const mapDispatchToProps = (dispatch, ownProps) => {
+
+    return {
+        register: contact => dispatch(register(contact))
+    }
+
+    // console.log("mapDispatchToProps",getMovies);
+
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(RegistrationView)

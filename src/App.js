@@ -1,27 +1,21 @@
-import React, { useEffect } from "react";
+import React from "react";
+
+
 import './App.css';
+
 
 import MainView from "./components/main-view";
 
-function App() {
-  useEffect(() => {
-    //getMovies();
-  }, []);
 
-  return (
 
-    <div className="App">
-      <header className="App-header">
-        <h3>Ryan's Movie App</h3>
-
+  const App = () => {
+    return (
+      <div className='container bg-white p-4 mt-5'>
+        <h1>Movie List:</h1>
         <MainView />
-
-
-      </header>
-
-    </div>
-
-  );
-}
+        
+      </div>
+    );
+  };
 
 export default App;

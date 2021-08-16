@@ -1,61 +1,54 @@
 import React from "react";
-import { Container, Row, Col, Button } from 'react-bootstrap';
-
+import { Row, Col, Button, Container } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import { getProfile, deleteRegistration, saveProfile, removeFavorite } from '../reducer';
 class ProfileView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            _id: "",
             email: "",
             password: "",
             fullname: "",
             birthdate: "",
             favorites: [],
-            favoritesId: [],
+            favoritesId: -1,
             user: [],
-            message: "",
             hasErrors: false,
-            errors: []
+            errors: [],
+            isLoaded: false
         }
     }
+    //{"favorites":[],"_id":"60db34ca58195a17f8d54340","password":"2c9341ca4cf3d87b9e4eb905d6a3ec45","fullname":"Ryan Tester","birthday":"1985-03-03T00:00:00.000Z","email":"bob@test.com","__v":0}
     componentDidMount() {
-        fetch(this.props.server + "user")
-            .then(res => res.json())
-            .then(
-                (result) => {
 
-                    if (result["_id"] === undefined) // no user logged in redirect to login page.
-                    {
-                        window.location.href = "/login";
-                    }
-                    this.setState({
-                        user: result,
-                        email: result.email,
-                        fullname: result.fullname,
-                        birthdate: result.birthday,
-                        favorites: result.favorites,
-                        favoritesId: result.favoritesId
-                    });
+        this.props.getProfile().then((result) => {
+            console.log("getProfile=>result: ", result.payload);
 
-                    console.log(result);
-                },
-                // Note: it's important to handle errors here
-                // instead of a catch() block so that we don't swallow
-                // exceptions from actual bugs in components.
-                (error) => {
-                    alert("error");
-                    this.setState({
-                        isLoaded: true,
-                        error
-                    });
-                }
-            );
+            this.setState({
+                user: result.payload.user,
+                _id: result.payload.user._id,
+                email: result.payload.user.email,
+                fullname: result.payload.user.fullname,
+                birthdate: result.payload.user.birthday,
+                favorites: result.payload.user.favorites,
+                favoritesId: result.payload.user.favoritesId,
+                isLoaded: true
+            });
+
+            //alert(result.fullname);
+            console.log("STATE:", this.state);
+            //window.location.replace("/login");
+        });
 
         // fetch current user;
     }
     emailChangeHandler = (e) => {
+
         this.setState({ email: e.target.value });
     }
     passwordChangeHandler = (e) => {
+
         this.setState({ password: e.target.value });
     }
     fullnameChangeHandler = (e) => {
@@ -66,68 +59,61 @@ class ProfileView extends React.Component {
 
         this.setState({ birthdate: e.target.value });
     }
-    removeFavorites = (id) => {
-        alert(id); ///user/movie/remove/:id
-        fetch(this.props.server + "user/movie/remove/" + id).then(res => res.json())
-            .then((result) => {
-                console.log(result.message);
-                alert(result.message);
-                window.location.reload();
-            });
-    }
     unRegister = (e) => {
         //  alert(id);
         e.preventDefault();
-        fetch(this.props.server + "user/unreg/1").then(res => res.json())
-            .then((result) => {
-                console.log(result.message);
-                alert(result.message);
-                window.location.href = "/login";
-            });
+        this.props.deleteRegistration().then((result) => {
+            console.log(result);
+            window.location.href = "/login";
+        });
+    }
+    removeFavorites = (id) => {
+        alert(id);
+        this.props.removeFavorite({ id: id }).then((result) => {
+            console.log(result);
+        });
+
     }
     save = (e) => {
         e.preventDefault();
         const body = {
-            _id: this.state.user._id,
+            _id: this.state._id,
             email: this.state.email,
             password: this.state.password,
             fullname: this.state.fullname,
             birthdate: this.state.birthdate,
             favorites: this.state.favoritesId
         };
-        fetch(this.props.server + "users/update",
-            {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            })
-            .then(res => res.json())
-            .then((result) => {
-                console.log(result);
-                //alert(result)
-                if (result.status === -1) {
-                    this.setState({
-                        errors: result.errors,
-                        hasErrors: true
-                    })
-                }
-                else if (result.status < 0) {
-                    alert("update failed");
-                } else {
-                    alert(result.message);
-                }
-            },
-                (error) => {
-                    this.setState({ message: "error loading profile" });
-                    this.setState({
-                        isLoaded: true,
-                        error
-                    });
-                }
-            );
+        alert(JSON.stringify(body));
+        console.log("SAVE: ", body)
+
+        this.props.saveProfile({ profile: body }).then((result) => {
+
+            console.log(result);
+            //alert(result)
+            const response = result.payload.response;
+            console.log("response", response);
+            if (response.status === -1) {
+                this.setState({
+                    errors: response.errors,
+                    hasErrors: true
+                })
+            }
+            else if (response.status < 0) {
+                alert("update failed");
+            } else {
+                alert(response.message);
+            }
+        });
+
     }
     render() {
+        if (!this.state.isLoaded) {
+            return (<div>loading</div>);
+        }
         return (
+
+
             <div >
                 <Container>
                     <h1>Profile Page</h1>
@@ -141,7 +127,7 @@ class ProfileView extends React.Component {
                         <br />
 
                         <Row><Col>
-                            <input type="text" name="fullname" id="fullname" minlength="2" required placeholder="fullname"
+                            <input type="text" name="fullname" id="fullname" minLength="2" required placeholder="fullname"
                                 value={this.state.fullname} onChange={this.fullnameChangeHandler} />
                         </Col>
                         </Row>
@@ -187,8 +173,6 @@ class ProfileView extends React.Component {
                         </div>
                     ))}
 
-
-
                     {this.state.hasErrors ?
                         this.state.errors.map((error) => (
                             <p>{error.field}: {error.message}</p>
@@ -199,10 +183,26 @@ class ProfileView extends React.Component {
 
 
                 </Container>
-
-            </div >
+            </div>
         );
     }
 
 }
-export default ProfileView;
+const mapStateToProps = (state) => {
+    return {
+        user: state.user
+    }
+}
+const mapDispatchToProps = (dispatch, ownProps) => {
+    return {
+        getProfile: id => dispatch(getProfile()),
+        deleteRegistration: () => dispatch(deleteRegistration()),
+        saveProfile: profile => dispatch(saveProfile(profile)),
+        removeFavorite: id => dispatch(saveProfile(id)),
+    }
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ProfileView)

@@ -1,0 +1,18 @@
+state:
+Data:
+	movies:[] {fetch from server}
+Actions:
+	getMovies() {render on page}
+	getMovie (id){render on page}
+
+	getDirector() {render on page}
+	getGenre() {render on page}
+
+
+Data:
+	profile:{} {fetch from server after login}
+Actions:
+	register() {submit data to server to validate and save if valid}
+	saveUser() {submit data to server to validate and save if valid}
+	login() {submit username/password to server, respnonse is valid token or error message}
+	getUser() {fetch from server the current logged in user}

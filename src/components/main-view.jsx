@@ -8,7 +8,9 @@ import RegistrationView from "./registration-view";
 import UserProfile from "./profile-view";
 import DirectorView from "./director-view";
 import GenreView from "./genre-view";
-import 'bootstrap/dist/css/bootstrap.css';
+
+import { connect } from 'react-redux';
+import { getMovieList } from '../reducer';
 require('dotenv').config();
 class MainView extends React.Component {
   constructor(props) {
@@ -21,42 +23,15 @@ class MainView extends React.Component {
       movie: undefined,
       director: undefined,
       genre: undefined,
-      isLoaded: false,
+      isLoaded: true,
       error: null,
       token: sessionStorage.getItem("token")
     }
+
   }
 
-  componentDidMount() {
-    this.loadData();
-  }
-  loadData() {
-
-    fetch(this.state.SERVER_ROOT_URL + "movies")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log("get movies", result);
-          this.setState({
-            isLoaded: true,
-            movies: result
-          });
 
 
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          alert("error!!");
-          console.log("error!!", error);
-          this.setState({
-            isLoaded: true,
-            error: error
-          });
-        }
-      );
-  }
 
   showMovie = (idx) => {
     console.log(this.state.movies[idx]);
@@ -80,13 +55,14 @@ class MainView extends React.Component {
     sessionStorage.removeItem("token");
     this.setState({ token: null });
   }
+
   render() {
     if (!this.state.isLoaded) {
       return <div />
     }
     return (
       <Router>
-        <div>version: 3.6</div>
+        <div>version: 3.8</div>
         <div className="left20px container">
           {this.state.token ?
             <span>
@@ -109,38 +85,31 @@ class MainView extends React.Component {
 
           <Route path="/login">
 
-            <LoginView server={this.state.SERVER_ROOT_URL} setToken={this.setToken} />
+            <LoginView setToken={this.setToken} />
 
           </Route>
           <Route path="/logout">
 
-            <LoginView server={this.state.SERVER_ROOT_URL} setToken={this.setToken} />
+            <LoginView setToken={this.setToken} />
 
           </Route>
           <Route exact path="/movies"
             render={() => ( // 3.27
 
-              this.state.token ? (<MovieCard
-                movies={this.state.movies}
-                setMovieView={this.showMovie}
-                server={this.state.SERVER_ROOT_URL}
-              />) : (
-                <LoginView server={this.state.SERVER_ROOT_URL} setToken={this.setToken} />
+              this.state.token ? (<MovieCard />) : (
+                <LoginView setToken={this.setToken} />
               )
             )}
           />
 
-
           <Route path="/movies/:movieId"
             render={({ match }) => (
-              <MovieView movie={this.state.movies.find((m) => `${m.id}` === match.params.movieId)} server={this.state.SERVER_ROOT_URL} />
+              <MovieView movieId={match.params.movieId} />
             )}
-
-
           />
           <Route path="/director/:dirName"
             render={({ match }) => (
-              <DirectorView dirName={match.params.dirName} server={this.state.SERVER_ROOT_URL} />
+              <DirectorView dirName={match.params.dirName} />
             )}
 
 
@@ -149,8 +118,6 @@ class MainView extends React.Component {
             render={({ match }) => (
               <GenreView genre={match.params.genre} server={this.state.SERVER_ROOT_URL} />
             )}
-
-
           />
           <Route path="/profile">
             <UserProfile server={this.state.SERVER_ROOT_URL} />
@@ -159,8 +126,30 @@ class MainView extends React.Component {
           <Route path="/register">
             <RegistrationView server={this.state.SERVER_ROOT_URL} />
           </Route>
+
         </Switch>
       </Router>);
   }
+
 }
-export default MainView;
+function mapStateToProps(state) {
+  console.log("mapStateToProps.movies:", state.movies);
+  return {
+    movies: state.movies
+  }
+}
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const getMovies = dispatch(getMovieList());
+
+  return {
+    getMovieList: getMovies
+  }
+
+  // console.log("mapDispatchToProps",getMovies);
+
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MainView)
