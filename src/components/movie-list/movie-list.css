@@ -1,0 +1,23 @@
+.imgAdd {
+  height: 25px;
+  width: 25px;
+}
+
+.oddRow {
+  background-color: cadetblue;
+  color: antiquewhite;
+}
+
+.evenRow {
+  background-color: floralwhite;
+}
+
+.filter {
+  position: relative;
+  width: 50%;
+}
+
+.addButton {
+  color: white;
+}
+/*# sourceMappingURL=movie-list.css.map */

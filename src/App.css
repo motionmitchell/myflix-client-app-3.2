@@ -1,12 +1,7 @@
 .App {
   text-align: left;
 }
-.rowEven{
-  background-color: #dcdcdc;
-}
-.rowOdd {
-  background-color: #aaaaaa;
-}
+
 .rowImage{
   background-color:azure;
 }
@@ -15,8 +10,8 @@
   pointer-events: none;
 }
 img{
-  height:300px;
-  width:600px;
+  height:420px;
+  width:420px;
 }
 p{
   height:10px;

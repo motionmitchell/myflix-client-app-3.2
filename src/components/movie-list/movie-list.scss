@@ -1,0 +1,20 @@
+$ImageHeight: 25px;
+$imageWidth: 25px;
+.imgAdd{
+    height:$ImageHeight;
+    width:$imageWidth;
+}
+.oddRow{
+    background-color:cadetblue;
+    color:antiquewhite;
+}
+.evenRow{
+    background-color:floralwhite;
+}
+.filter{
+    position:relative;
+    width:50%;
+}
+.addButton {
+    color:white;
+}
